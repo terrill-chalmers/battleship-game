@@ -3,14 +3,10 @@ package Java.domain;
 import Java.exception.InvalidPegLocationException;
 import Java.exception.InvalidShipLocationException;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Random;
 
 public class Game {
     private Grid myBoard;
@@ -23,11 +19,25 @@ public class Game {
 
     public void playGame() {
         setShips(myBoard);
-        boolean gameOver;
 
+        takeTurns();
+
+        //should game over be class capable of knowing when game is over, who won, and printing congrats, number of turns, etc.
+
+    }
+
+    protected void takeTurns() {
+        boolean gameOver = false;
         do {
-            System.out.println(enterGuess());
-            gameOver = checkForGameOver();
+            for(int turn = 0; turn < 2; turn++) {
+                if(turn == 0) {
+                    System.out.println(enterGuess());
+                    gameOver = checkForGameOver();
+                } else if(!gameOver) {
+                    guess(myBoard, getRandomLocation());
+                    gameOver = checkForGameOver();
+                }
+            }
         } while (!gameOver);
     }
 
@@ -42,11 +52,10 @@ public class Game {
     protected void enterShipLocation(Grid board, ShipType shipType) {
         boolean valid = false;
         do {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter starting location for " + shipType.getName());
-            String startingLocation = scanner.nextLine();
-            System.out.println("Enter direction for " + shipType.getName() + " R(for Right) or D(for Down)");
-            String direction = scanner.nextLine();
+            MyScanner scanner = getMyScanner();
+            String startingLocation = scanner.askForInput("Enter starting location for " + shipType.getName());
+            String direction = scanner.askForInput("Enter direction for " + shipType.getName() + " R(for Right) or D" +
+                    "(for Down)");
 
             if (!setShip(board, shipType, startingLocation, direction)) {
                 System.out.println("That is not a valid location for the " + shipType.getName());
@@ -62,37 +71,39 @@ public class Game {
         try {
             Location start = new Location(startingLocation);
             validateDirection(direction);
-            List<Peg> proposedPegs = new ArrayList<>();
 
-
-            for (int offset = 0; offset < shipType.getSize(); offset++) {
-                int currentColumnIndex = start.getColumnIndex();
-                int currentRowIndex = start.getRowIndex();
-
-                if (direction.equalsIgnoreCase("R")) {
-                    currentColumnIndex += offset;
-                } else {
-                    currentRowIndex += offset;
-                }
-
-                Peg currentPeg = new Peg();
-                currentPeg.setColumnIndex(currentColumnIndex);
-                currentPeg.setRowIndex(currentRowIndex);
-
-                board.getGrid()[currentColumnIndex][currentRowIndex] = currentPeg;
-                if (validateLocationIsAvailable(currentPeg)) {
-                    proposedPegs.add(currentPeg);
-                }
-            }
-
-            markShipPegsAsOccupied(board, shipType.getSize(), proposedPegs);
+            markShipPegsAsOccupied(board, shipType.getSize(), checkPegLocations(board, shipType, direction, start));
             locationOk = true;
 
-        } catch (InvalidPegLocationException | InvalidShipLocationException ex) {
+        } catch (InvalidPegLocationException | InvalidShipLocationException | ArrayIndexOutOfBoundsException ex) {
             locationOk = false;
         }
 
         return locationOk;
+    }
+
+    private List<Peg> checkPegLocations(Grid board, ShipType shipType, String direction, Location start) {
+        List<Peg> proposedPegs = new ArrayList<>();
+        for (int offset = 0; offset < shipType.getSize(); offset++) {
+            int currentColumnIndex = start.getColumnIndex();
+            int currentRowIndex = start.getRowIndex();
+
+            if (direction.equalsIgnoreCase("R")) {
+                currentColumnIndex += offset;
+            } else {
+                currentRowIndex += offset;
+            }
+
+            Peg currentPeg = new Peg();
+            currentPeg.setColumnIndex(currentColumnIndex);
+            currentPeg.setRowIndex(currentRowIndex);
+
+            board.getGrid()[currentColumnIndex][currentRowIndex] = currentPeg;
+            if (validateLocationIsAvailable(currentPeg)) {
+                proposedPegs.add(currentPeg);
+            }
+        }
+        return proposedPegs;
     }
 
     protected void markShipPegsAsOccupied(Grid board, int shipSize, List<Peg> proposedPegs) {
@@ -130,22 +141,37 @@ public class Game {
 
     protected String enterGuess() {
         try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Guess location");
-
-            Location location = new Location(scanner.nextLine());
+            MyScanner scanner = getMyScanner();
+            Location location = new Location(scanner.askForInput("Guess location"));
 
             return guess(opponentsBoard, location);
+
         } catch (InvalidPegLocationException e) {
             return "Invalid guess.";
         }
     }
 
-    protected Location getRandomLocation() throws InvalidPegLocationException {
-        String randomColumn = Column.getRandomColumn().name();
-        int rowIndex = new Random().nextInt((10 - 1) + 1) + 1;
+    protected MyScanner getMyScanner() {
+        return new MyScanner();
+    }
 
-        return new Location(randomColumn + rowIndex);
+    protected Location getRandomLocation() {
+        boolean validLocation;
+        Location randomLocation = null;
+
+        do {
+            String randomColumn = Column.getRandomColumn().name();
+            int rowIndex = new Random().nextInt((10 - 1) + 1) + 1;
+
+            try {
+                randomLocation = new Location(randomColumn + rowIndex);
+                validLocation = true;
+            } catch (InvalidPegLocationException e) {
+                validLocation = false;
+            }
+        } while (!validLocation);
+
+        return randomLocation;
     }
 
     public Grid getMyBoard() { return myBoard; }
