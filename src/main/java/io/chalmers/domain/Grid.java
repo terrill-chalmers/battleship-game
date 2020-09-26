@@ -1,4 +1,4 @@
-package Java.domain;
+package io.chalmers.domain;
 
 public class Grid {
     private static final int COLUMN_SIZE = 10, ROW_SIZE = 10;

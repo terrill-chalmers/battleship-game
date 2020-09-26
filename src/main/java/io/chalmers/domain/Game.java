@@ -1,7 +1,7 @@
-package Java.domain;
+package io.chalmers.domain;
 
-import Java.exception.InvalidPegLocationException;
-import Java.exception.InvalidShipLocationException;
+import io.chalmers.exception.InvalidPegLocationException;
+import io.chalmers.exception.InvalidShipLocationException;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

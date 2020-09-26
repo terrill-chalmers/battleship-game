@@ -1,6 +1,6 @@
-package Java.domain;
+package io.chalmers.domain;
 
-import Java.utility.DisplayUtil;
+import io.chalmers.utility.DisplayUtil;
 
 public enum PegStatus {
     EMPTY (" "),

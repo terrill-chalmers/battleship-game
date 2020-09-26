@@ -1,5 +1,6 @@
-package Java.domain;
+package io.chalmers.domain;
 
+import io.chalmers.domain.ShipType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,6 @@
-package Java.domain;
+package io.chalmers.domain;
 
-import Java.utility.DisplayUtil;
-import org.apache.commons.lang.WordUtils;
+import io.chalmers.utility.DisplayUtil;
 
 public enum ShipType {
     DESTROYER(2),
