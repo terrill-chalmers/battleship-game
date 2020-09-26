@@ -1,4 +1,4 @@
-package Java.domain;
+package io.chalmers.domain;
 
 import java.util.Random;
 

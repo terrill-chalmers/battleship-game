@@ -1,4 +1,4 @@
-package Java.utility;
+package io.chalmers.utility;
 
 import org.apache.commons.lang.WordUtils;
 

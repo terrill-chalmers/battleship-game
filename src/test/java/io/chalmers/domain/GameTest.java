@@ -1,7 +1,8 @@
-package Java.domain;
+package io.chalmers.domain;
 
-import Java.exception.InvalidPegLocationException;
-import Java.exception.InvalidShipLocationException;
+import io.chalmers.exception.InvalidPegLocationException;
+import io.chalmers.exception.InvalidShipLocationException;
+import io.chalmers.domain.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

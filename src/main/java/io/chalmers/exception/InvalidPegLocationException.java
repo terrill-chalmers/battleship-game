@@ -1,4 +1,4 @@
-package Java.exception;
+package io.chalmers.exception;
 
 public class InvalidPegLocationException extends Throwable {
 }

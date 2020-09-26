@@ -1,6 +1,6 @@
-package Java.domain;
+package io.chalmers.domain;
 
-import Java.exception.InvalidPegLocationException;
+import io.chalmers.exception.InvalidPegLocationException;
 
 import java.util.Arrays;
 

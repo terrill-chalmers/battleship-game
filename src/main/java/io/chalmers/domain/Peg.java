@@ -1,4 +1,4 @@
-package Java.domain;
+package io.chalmers.domain;
 
 public class Peg {
     private int columnIndex;
